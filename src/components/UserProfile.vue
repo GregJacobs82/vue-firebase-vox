@@ -1,5 +1,6 @@
 <template>
     <div>
+        <h3>User Profile</h3>
         <div class="mb-3">
             User ID: {{ user.uid }}
             <div v-if="user.metadata" class="text-black-50">

@@ -7,7 +7,7 @@
 
         <hr>
 
-        <div class="col-lg-6 bg-light shadow p-3 p-lg-5 mx-auto mb-5">
+        <div class="col-lg-6 rounded shadow p-3 p-lg-5 mx-auto mb-5" :class="newUser ? 'alert-success' : 'alert-info'">
             <div v-if="newUser" class="text-center mb-3">
                 <h3>Create a New Account</h3>
                 <a href="#" @click="newUser = !newUser">
@@ -46,7 +46,7 @@
                     </div>
                     Loading...
                 </button>
-                <button v-else class="btn btn-lg btn-primary w-100" @click="signInOrCreateUser()">
+                <button v-else class="btn btn-lg text-white w-100" @click="signInOrCreateUser()" :class="newUser ? 'btn-success' : 'btn-info'">
                     {{ newUser ? 'Create Account' : 'Sign In' }}
                 </button>
             </div>
