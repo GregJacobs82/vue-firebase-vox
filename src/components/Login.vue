@@ -7,46 +7,49 @@
 
         <hr>
 
-        <div v-if="newUser" class="mb-3">
-            <h3>Sign Up for a New Account</h3>
-            <a href="#" @click="newUser = !newUser">
-                Returning User?
-            </a>
-        </div>
-
-        <div v-else class="mb-3">
-            <h3>Sign In with Email</h3>
-            <a href="#" @click="newUser = !newUser">
-                New User?
-            </a>
-        </div>
-
-        <div>
-            <div class="mb-3">
-                <label for="inputEmail1" class="form-label">Email</label>
-                <input v-model="email" type="email" class="form-control" id="inputEmail1" aria-describedby="emailHelp">
-                <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-            </div>
-            <div class="mb-3">
-                <label for="inputPassword1" class="form-label">Password</label>
-                <input v-model="password" type="password" class="form-control" id="inputPassword1">
-            </div>
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="check1">
-                <label class="form-check-label" for="check1">
-                    <small>I agree to your Terms of Use &amp; Privacy Policy</small>
-                </label>
+        <div class="col-lg-6 bg-light shadow p-3 p-lg-5 mx-auto mb-5">
+            <div v-if="newUser" class="text-center mb-3">
+                <h3>Create a New Account</h3>
+                <a href="#" @click="newUser = !newUser">
+                    Returning User?
+                </a>
             </div>
 
-            <button v-if="loading" class="btn btn-primary disabled" @click="signInOrCreateUser()" disabled>
-                <div class="spinner-grow spinner-grow-sm" role="status">
-                    <span class="visually-hidden">Loading...</span>
+            <div v-else class="text-center mb-3">
+                <h3>Sign In with Email</h3>
+                <a href="#" @click="newUser = !newUser">
+                    New User?
+                </a>
+            </div>
+
+            <div>
+                <!-- FORM -->
+                <div class="mb-3">
+                    <label for="inputEmail1" class="form-label">Email</label>
+                    <input v-model="email" type="email" class="form-control" id="inputEmail1" aria-describedby="emailHelp">
+                    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
                 </div>
-                Loading...
-            </button>
-            <button v-else class="btn btn-primary" @click="signInOrCreateUser()">
-                {{ newUser ? 'Sign Up' : 'Sign In' }}
-            </button>
+                <div class="mb-3">
+                    <label for="inputPassword1" class="form-label">Password</label>
+                    <input v-model="password" type="password" class="form-control" id="inputPassword1">
+                </div>
+
+                <!-- ERRORS -->
+                <div v-if="errorMessage" class="alert alert-danger mt-3">
+                    {{ errorMessage }}
+                </div>
+
+                <!-- SUBMIT ACTION -->
+                <button v-if="loading" class="btn btn-primary disabled" @click="signInOrCreateUser()" disabled>
+                    <div class="spinner-grow spinner-grow-sm" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    Loading...
+                </button>
+                <button v-else class="btn btn-lg btn-primary w-100" @click="signInOrCreateUser()">
+                    {{ newUser ? 'Create Account' : 'Sign In' }}
+                </button>
+            </div>
         </div>
     </aside>
 </template>
@@ -58,21 +61,26 @@
         data() {
             return {
                 auth,
-
                 newUser: false,
                 email: '',
                 password: '',
                 loading: false,
+                errorMessage: '',
             };
         },
         methods: {
             async signInOrCreateUser() {
                 this.loading = true;
 
-                if (this.newUser) {
-                    await auth.createUserWithEmailAndPassword(this.email, this.password);
-                } else {
-                    await auth.signInWithEmailAndPassword(this.email, this.password);
+                this.errorMessage = '';
+                try {
+                    if (this.newUser) {
+                        await auth.createUserWithEmailAndPassword(this.email, this.password);
+                    } else {
+                        await auth.signInWithEmailAndPassword(this.email, this.password);
+                    }
+                } catch (error) {
+                    this.errorMessage = error.message;
                 }
 
                 this.loading = false;
