@@ -3,7 +3,9 @@
         <h3>Chat Rooms</h3>
         <ul>
             <li v-for="chat in chats" :key="chat.id">
-                {{ chat.id }}
+                <router-link :to="{ name: 'ChatRoom', params: { id: chat.id }}">
+                    {{ chat.id }}
+                </router-link>
             </li>
         </ul>
         <button class="btn btn-success" @click="createChatRoom()">
