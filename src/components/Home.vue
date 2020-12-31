@@ -4,10 +4,7 @@
 
         <User v-slot:user="{ user }">
             <div v-if="user">
-                User ID: {{ user.uid }}
-                <div v-if="user.metadata" class="text-black-50">
-                    <small>Created: {{ user.metadata.creationTime }}</small>
-                </div>
+                <UserProfile :user="user" />
             </div>
             <Login v-else />
         </User>
@@ -16,11 +13,13 @@
 
 <script>
     import User from './User';
+    import UserProfile from './UserProfile';
     import Login from "./Login";
 
     export default {
         components: {
             User,
+            UserProfile,
             Login,
         }
     }
