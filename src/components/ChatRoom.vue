@@ -6,11 +6,13 @@
         <!-- NOTE: We wrap everything in the <User> component bc a user must be logged in to chat -->
         <User #user="{ user }">
             <div class="col-lg-6 mx-auto bg-light rounded shadow-sm p-3">
-                <ul>
-                    <li v-for="message in messages" :key="message.id">
-                        {{ message.text }}
-                    </li>
-                </ul>
+                <div v-for="message in messages" :key="message.id">
+                    <ChatMessage
+                        :sender="message.sender"
+                        :text="message.text"
+                        :is-owner="user.uid === message.sender"
+                    />
+                </div>
 
                 <div class="input-group">
                     <input
@@ -40,10 +42,12 @@
 <script>
     import User from './User';
     import { db } from '../firebase';
+    import ChatMessage from './ChatMessage';
 
     export default {
         components: {
             User,
+            ChatMessage,
         },
         data() {
             return {
