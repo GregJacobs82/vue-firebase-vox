@@ -5,6 +5,7 @@
             <p>Realtime Voice Chat</p>
         </header>
 
+        <router-view />
     </div>
 </template>
 
