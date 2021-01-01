@@ -10,6 +10,7 @@
                     <ChatMessage
                         :sender="message.sender"
                         :text="message.text"
+                        :time="message.createdAt"
                         :audio-url="message.audioURL"
                         :is-owner="user.uid === message.sender"
                     />
@@ -93,6 +94,7 @@
     import User from './User';
     import { db, storage } from '../firebase';
     import ChatMessage from './ChatMessage';
+    import moment from 'moment';
 
     export default {
         components: {
@@ -155,7 +157,7 @@
                 await this.messagesCollection.doc(messageId).set({
                     text: this.newMessageText,
                     sender: uid,
-                    createdAt: Date.now(),
+                    createdAt: moment().toISOString(), // Date.now(),
                     audioURL,
                 })
 

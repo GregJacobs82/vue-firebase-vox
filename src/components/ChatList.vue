@@ -16,6 +16,7 @@
 
 <script>
     import { db } from '../firebase';
+    import moment from 'moment';
 
     export default {
         props: {
@@ -37,7 +38,7 @@
         methods: {
             async createChatRoom() {
                 const newChat = await db.collection('chats').add({
-                    createdAt: Date.now(),
+                    createdAt: moment().toISOString(), // Date.now(),
                     owner: this.uid,
                     members: [ this.uid ]
                 });
