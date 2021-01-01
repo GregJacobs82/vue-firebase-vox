@@ -3,10 +3,10 @@
         <div class="col-11 col-md-9 rounded p-2 pt-0 mb-3" :class="isOwner ? 'alert-info' : 'alert-secondary'">
             <div><span style="font-size:.65em;opacity:.5;">{{ convertedTime(time) }}</span></div>
             <div><span style="font-size:.65em;opacity:.5;">{{ sender }}</span></div>
-            <div>{{ text }}</div>
             <div v-if="audioUrl" class="mt-1">
                 <audio :src="audioUrl" controls />
             </div>
+            <div>{{ text }}</div>
         </div>
     </div>
 </template>

@@ -6,83 +6,96 @@
         <!-- NOTE: We wrap everything in the <User> component bc a user must be logged in to chat -->
         <User #user="{ user }">
             <div class="col-lg-6 mx-auto bg-light rounded shadow-sm p-3">
-                <div v-for="message in messages" :key="message.id">
-                    <ChatMessage
-                        :sender="message.sender"
-                        :text="message.text"
-                        :time="message.createdAt"
-                        :audio-url="message.audioURL"
-                        :is-owner="user.uid === message.sender"
-                    />
+                <div class="chat-box container-fluid" v-chat-scroll>
+
+                    <!-- TODO: setup re-render on click to increase message limit
+                    <div class="text-center my-5">
+                        <button class="btn btn-link text-decoration-none" @click="increaseMessageLimit">
+                            Load previous messages...
+                        </button>
+                    </div>-->
+                    <template>
+                        <ChatMessage
+                            v-for="message in messages"
+                            :key="message.id"
+                            :sender="message.sender"
+                            :text="message.text"
+                            :time="message.createdAt"
+                            :audio-url="message.audioURL"
+                            :is-owner="user.uid === message.sender"
+                        />
+                    </template>
                 </div>
 
-                <div v-if="newAudio" class="text-center p-2 pb-1 w-100 alert-success rounded-top">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <small>Audio to be sent</small>
-                        <div class="btn btn-link text-decoration-none text-danger" @click="newAudio = null">
-                            <small>Cancel</small> <i class="fas fa-times-circle"></i>
+                <div class="chat-sticky-footer">
+                    <div v-if="newAudio" class="text-center p-2 pb-1 w-100 alert-success rounded-top">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <small>Audio to be sent</small>
+                            <div class="btn btn-link text-decoration-none text-danger" @click="newAudio = null">
+                                <small>Cancel</small> <i class="fas fa-times-circle"></i>
+                            </div>
                         </div>
-                    </div>
-                    <audio
-                        :src="newAudioURL"
-                        controls
-                    />
-                </div>
-
-                <div class="input-group w-100">
-                    <!-- TOGGLE AUDIO / TEXT -->
-                    <button
-                        class="btn btn-lg"
-                        :class="messageIsAudio ? 'btn-dark' : 'btn-secondary'"
-                        type="button"
-                        @click="messageIsAudio = !messageIsAudio"
-                    >
-                        <i class="fas" :class="messageIsAudio ? 'fa-microphone-slash' : 'fa-microphone' "></i>
-                    </button>
-
-                    <!-- AUDIO: RECORD / STOP BUTTONS -->
-                    <div v-if="messageIsAudio" class="input-group-text bg-dark border-0">
-                        <!-- RECORD AUDIO -->
-                        <button
-                            v-if="!recorder"
-                            class="btn btn-sm btn-danger"
-                            type="button"
-                            @click="startRecord()"
-                        >
-                            <i class="fas fa-circle"></i>
-                        </button>
-                        <!-- STOP AUDIO -->
-                        <button
-                            v-else
-                            class="btn btn-sm btn-warning"
-                            type="button"
-                            @click="stopRecord()"
-                        >
-                            <i class="fas fa-stop"></i>
-                        </button>
+                        <audio
+                            :src="newAudioURL"
+                            controls
+                        />
                     </div>
 
-                    <!-- TEXT MESSAGE INPUT -->
-                    <input
-                        v-model="newMessageText"
-                        type="text"
-                        class="form-control"
-                        placeholder="Message..."
-                        aria-label="New Message"
-                        aria-describedby="button-addon2"
-                        @keypress.enter="sendMessage(user.uid)"
-                    >
+                    <div class="input-group w-100">
+                        <!-- TOGGLE AUDIO / TEXT -->
+                        <button
+                            class="btn btn-lg"
+                            :class="messageIsAudio ? 'btn-dark' : 'btn-secondary'"
+                            type="button"
+                            @click="messageIsAudio = !messageIsAudio"
+                        >
+                            <i class="fas" :class="messageIsAudio ? 'fa-microphone-slash' : 'fa-microphone' "></i>
+                        </button>
 
-                    <!-- SEND MESSAGE -->
-                    <button
-                        :disabled="loading"
-                        class="btn btn-success"
-                        type="button"
-                        id="button-addon2"
-                        @click="sendMessage(user.uid)"
-                    >
-                        Send
-                    </button>
+                        <!-- AUDIO: RECORD / STOP BUTTONS -->
+                        <div v-if="messageIsAudio" class="input-group-text bg-dark border-0">
+                            <!-- RECORD AUDIO -->
+                            <button
+                                v-if="!recorder"
+                                class="btn btn-sm btn-danger"
+                                type="button"
+                                @click="startRecord()"
+                            >
+                                <i class="fas fa-circle"></i>
+                            </button>
+                            <!-- STOP AUDIO -->
+                            <button
+                                v-else
+                                class="btn btn-sm btn-warning"
+                                type="button"
+                                @click="stopRecord()"
+                            >
+                                <i class="fas fa-stop"></i>
+                            </button>
+                        </div>
+
+                        <!-- TEXT MESSAGE INPUT -->
+                        <input
+                            v-model="newMessageText"
+                            type="text"
+                            class="form-control"
+                            placeholder="Message..."
+                            aria-label="New Message"
+                            aria-describedby="button-addon2"
+                            @keypress.enter="sendMessage(user.uid)"
+                        >
+
+                        <!-- SEND MESSAGE -->
+                        <button
+                            :disabled="loading"
+                            class="btn btn-success"
+                            type="button"
+                            id="button-addon2"
+                            @click="sendMessage(user.uid)"
+                        >
+                            Send
+                        </button>
+                    </div>
                 </div>
 
             </div>
@@ -109,11 +122,12 @@
                 newAudio: null,
                 recorder: null,
                 messageIsAudio: false,
+                messageLimit: 10,
             };
         },
         firestore() {
             return {
-                messages: this.messagesCollection.orderBy('createdAt').limitToLast(10),
+                messages: this.messagesCollection.orderBy('createdAt').limitToLast(this.messageLimit),
             }
         },
         computed: {
@@ -125,9 +139,13 @@
             },
             newAudioURL() {
                 return URL.createObjectURL(this.newAudio);
-            }
+            },
         },
         methods: {
+            /* TODO: setup re-render method to update message list based on new messageLimit, and fetch previous messages
+            increaseMessageLimit() {
+                this.messageLimit = this.messageLimit + 10;
+            },*/
             sendMessage(uid) {
                 let messageExists = (this.newMessageText || this.newAudio);
                 if (messageExists && !this.loading) {
@@ -198,5 +216,18 @@
 </script>
 
 <style>
+    audio {
+        max-width: 100%;
+    }
+    .chat-box {
+        height: 25rem;
+        width: 100%;
+        overflow: auto;
+    }
 
+    .chat-sticky-footer {
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
 </style>
