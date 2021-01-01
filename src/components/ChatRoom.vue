@@ -15,7 +15,13 @@
                     />
                 </div>
 
-                <div v-if="newAudio" class="text-center p-2 pb-1 w-100 mb-1 alert-danger">
+                <div v-if="newAudio" class="text-center p-2 pb-1 w-100 alert-success rounded-top">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <small>Audio to be sent</small>
+                        <div class="btn btn-link text-decoration-none text-danger" @click="newAudio = null">
+                            <small>Cancel</small> <i class="fas fa-times-circle"></i>
+                        </div>
+                    </div>
                     <audio
                         :src="newAudioURL"
                         controls
@@ -25,34 +31,38 @@
                 <div class="input-group w-100">
                     <!-- TOGGLE AUDIO / TEXT -->
                     <button
-                        class="btn btn-info text-white active"
+                        class="btn btn-lg"
+                        :class="messageIsAudio ? 'btn-dark' : 'btn-secondary'"
                         type="button"
+                        @click="messageIsAudio = !messageIsAudio"
                     >
-                        Audio
+                        <i class="fas" :class="messageIsAudio ? 'fa-microphone-slash' : 'fa-microphone' "></i>
                     </button>
 
-                    <!-- RECORD AUDIO -->
-                    <button
-                        v-if="!recorder"
-                        class="btn btn-danger"
-                        type="button"
-                        @click="startRecord()"
-                    >
-                        Record
-                    </button>
-                    <!-- STOP AUDIO -->
-                    <button
-                        v-else
-                        class="btn btn-warning"
-                        type="button"
-                        @click="stopRecord()"
-                    >
-                        Stop
-                    </button>
+                    <!-- AUDIO: RECORD / STOP BUTTONS -->
+                    <div v-if="messageIsAudio" class="input-group-text bg-dark border-0">
+                        <!-- RECORD AUDIO -->
+                        <button
+                            v-if="!recorder"
+                            class="btn btn-sm btn-danger"
+                            type="button"
+                            @click="startRecord()"
+                        >
+                            <i class="fas fa-circle"></i>
+                        </button>
+                        <!-- STOP AUDIO -->
+                        <button
+                            v-else
+                            class="btn btn-sm btn-warning"
+                            type="button"
+                            @click="stopRecord()"
+                        >
+                            <i class="fas fa-stop"></i>
+                        </button>
+                    </div>
 
                     <!-- TEXT MESSAGE INPUT -->
                     <input
-                        v-if="!newAudio"
                         v-model="newMessageText"
                         type="text"
                         class="form-control"
@@ -96,6 +106,7 @@
                 messages: [],
                 newAudio: null,
                 recorder: null,
+                messageIsAudio: false,
             };
         },
         firestore() {
