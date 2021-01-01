@@ -10,6 +10,7 @@
                     <ChatMessage
                         :sender="message.sender"
                         :text="message.text"
+                        :audio-url="message.audioURL"
                         :is-owner="user.uid === message.sender"
                     />
                 </div>
@@ -42,7 +43,7 @@
                     <!-- STOP AUDIO -->
                     <button
                         v-else
-                        class="btn btn-success"
+                        class="btn btn-warning"
                         type="button"
                         @click="stopRecord()"
                     >
@@ -63,8 +64,8 @@
 
                     <!-- SEND MESSAGE -->
                     <button
-                        :disabled="!newMessageText || loading"
-                        class="btn btn-secondary"
+                        :disabled="loading"
+                        class="btn btn-success"
                         type="button"
                         id="button-addon2"
                         @click="sendMessage(user.uid)"
@@ -80,7 +81,7 @@
 
 <script>
     import User from './User';
-    import { db } from '../firebase';
+    import { db, storage } from '../firebase';
     import ChatMessage from './ChatMessage';
 
     export default {
@@ -115,25 +116,41 @@
         },
         methods: {
             sendMessage(uid) {
-                if (this.newMessageText && !this.loading) {
+                let messageExists = (this.newMessageText || this.newAudio);
+                if (messageExists && !this.loading) {
                     this.addMessage(uid);
                 }
             },
             async addMessage(uid) {
                 this.loading = true;
 
+                let audioURL = null;
+
                 // this doesnt create the message yet, just a reference to the message
                 const { id: messageId } = this.messagesCollection.doc();
+
+                if (this.newAudio) {
+                    const storageRef = storage
+                        .ref('chats')
+                        .child(this.chatId)
+                        .child(`${messageId}.wav`);
+
+                    await storageRef.put(this.newAudio);
+
+                    audioURL = await storageRef.getDownloadURL();
+                }
 
                 // this sets the message to the DB
                 await this.messagesCollection.doc(messageId).set({
                     text: this.newMessageText,
                     sender: uid,
                     createdAt: Date.now(),
+                    audioURL,
                 })
 
                 this.loading = false;
                 this.newMessageText = '';
+                this.newAudio = null;
             },
             async startRecord() {
                 this.newAudio = null;
