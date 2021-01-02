@@ -1,7 +1,5 @@
 <template>
     <div class="container">
-        <h1>Homepage</h1>
-
         <User v-slot:user="{ user }">
             <div v-if="user">
                 <UserProfile :user="user" />

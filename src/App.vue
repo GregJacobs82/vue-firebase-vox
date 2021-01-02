@@ -1,22 +1,21 @@
 <template>
-    <div id="app">
-        <header class="container bg-light">
-            <h1>Vue Voxer</h1>
-            <p>Realtime Voice Chat</p>
-        </header>
-
-        <router-view />
+    <div id="app" class="d-flex flex-column h-100">
+        <AppHeader />
+        <main class="flex-shrink-0 pt-5 mt-5">
+            <router-view />
+        </main>
+        <AppFooter />
     </div>
 </template>
 
 <script>
-    import { auth } from './firebase';
-
-    console.log(auth);
+    import AppHeader from "./components/AppHeader";
+    import AppFooter from "./components/AppFooter";
 
     export default {
         components: {
-
+            AppHeader,
+            AppFooter,
         }
     }
 </script>
