@@ -2,10 +2,13 @@
     <div>
         <h3>User Profile</h3>
         <div class="mb-3">
-            User ID: {{ user.uid }}
-            <div v-if="user.metadata" class="text-black-50">
-                <small>Created: {{ user.metadata.creationTime }}</small>
+            <div>User AUTH ID: {{ uid }}</div>
+            <div v-if="creationTime" class="text-black-50">
+                <small>Created: {{ creationTime }}</small>
             </div>
+            <hr>
+            <div>User COLLECTION ID: {{ user.user_id }}</div>
+            <div>Display Name: {{ user.displayName }}</div>
         </div>
 
         <button class="btn btn-primary" @click="auth.signOut()">
@@ -19,16 +22,27 @@
 
     export default {
         props: {
-            user: {
-                type: Object,
+            uid: {
+                type: String,
                 required: true,
-            }
+            },
+            creationTime: {
+                type: String,
+                required: true,
+            },
         },
         data() {
             return {
-                auth
+                auth,
+                user: {
+                    user_id: "12345324",
+                    displayName: "Frank",
+                },
             };
-        }
+        },
+        // created() {
+        //     this.user = db.collection('users').where('user_id', '==', this.uid);
+        // },
     }
 </script>
 

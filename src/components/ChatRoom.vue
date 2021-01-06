@@ -123,6 +123,7 @@
                 recorder: null,
                 messageIsAudio: false,
                 messageLimit: 10,
+                messageLimitIncrement: 10,
             };
         },
         firestore() {
@@ -142,10 +143,14 @@
             },
         },
         methods: {
-            /* TODO: setup re-render method to update message list based on new messageLimit, and fetch previous messages
-            increaseMessageLimit() {
-                this.messageLimit = this.messageLimit + 10;
-            },*/
+            /* TODO: setup re-render method to update message list based on new messageLimit, and fetch previous messages */
+            getTenMoreMessages() {
+                //loading=true;
+                this.messageLimit = this.messageLimit + this.messageLimitIncrement;
+                //get offset data based on new messageLimit
+                //push to array
+                //loading.false
+            },
             sendMessage(uid) {
                 let messageExists = (this.newMessageText || this.newAudio);
                 if (messageExists && !this.loading) {

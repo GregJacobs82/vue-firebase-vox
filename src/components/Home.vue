@@ -2,7 +2,11 @@
     <div class="container">
         <User v-slot:user="{ user }">
             <div v-if="user">
-                <UserProfile :user="user" />
+                <UserProfile
+                    :uid="user.uid"
+                    :display-name="user.displayName"
+                    :creation-time="user.metadata.creationTime"
+                />
 
                 <hr>
 

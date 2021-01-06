@@ -10,6 +10,14 @@
 
             <div>
                 <!-- FORM -->
+                <div v-if="newUser" class="mb-3">
+                    <!-- user.updateProfile({ displayName: payload.displayName }) -->
+                    <label for="inputDisplayName" class="form-label">Name</label>
+                    <input v-model="displayName" type="email" class="form-control" id="inputDisplayName" aria-describedby="displayNameHelp">
+                    <div id="displayNameHelp" class="form-text" style="font-size:.85em;opacity:.5;">
+                        Enter your desired username or display name.
+                    </div>
+                </div>
                 <div class="mb-3">
                     <label for="inputEmail1" class="form-label">Email</label>
                     <input v-model="email" type="email" class="form-control" id="inputEmail1" aria-describedby="emailHelp">
@@ -77,13 +85,14 @@
 </template>
 
 <script>
-    import { auth } from '../firebase';
+    import { auth, db } from '../firebase';
 
     export default {
         data() {
             return {
                 auth,
                 newUser: false,
+                displayName: '',
                 email: '',
                 password: '',
                 loading: false,
@@ -97,12 +106,24 @@
                 this.errorMessage = '';
                 try {
                     if (this.newUser) {
-                        await auth.createUserWithEmailAndPassword(this.email, this.password);
+                        await auth.createUserWithEmailAndPassword(this.email, this.password)
+                        await db.collection("users").add({
+                            email: this.email,
+                            user_id: auth.currentUser.uid,
+                            displayName: this.displayName,
+                        })
+                            .then( (docRef) => {
+                                console.log("Document written with ID: ", docRef.id);
+                            })
+                            .catch( (error) => {
+                                console.error("Error adding document: ", error);
+                            });
                     } else {
                         await auth.signInWithEmailAndPassword(this.email, this.password);
                     }
                 } catch (error) {
                     this.errorMessage = error.message;
+                    console.error("Error adding document: ", error);
                 }
 
                 this.loading = false;
