@@ -11,7 +11,7 @@
             <div>Display Name: {{ user.displayName }}</div>
         </div>
 
-        <button class="btn btn-primary" @click="auth.signOut()">
+        <button class="btn btn-danger" @click="auth.signOut()">
             Sign Out
         </button>
     </div>
@@ -35,8 +35,8 @@
             return {
                 auth,
                 user: {
-                    user_id: "12345324",
-                    displayName: "Frank",
+                    user_id: "dummy12345324",
+                    displayName: "dummyFrank",
                 },
             };
         },

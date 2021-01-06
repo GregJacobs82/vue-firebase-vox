@@ -20,13 +20,24 @@
                 <div class="navbar-collapse collapse" id="navbarCollapse" style="">
                     <ul class="navbar-nav ms-auto mb-2 mb-md-0 text-end">
                         <li class="nav-item active">
-                            <a class="nav-link" aria-current="page" href="#">Home</a>
+                            <router-link
+                                :to="{ name: 'Home' }"
+                                class="nav-link"
+                                aria-current="page"
+                            >
+                                Home
+                            </router-link>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Link</a>
+                            <a class="nav-link" href="#">
+                                Dummy Link
+                            </a>
                         </li>
+                        <li><hr class="dropdown-divider"></li>
                         <li class="nav-item">
-                            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                            <a class="btn btn-danger" @click="auth.signOut()">
+                                Sign Out
+                            </a>
                         </li>
                     </ul>
                 </div>
