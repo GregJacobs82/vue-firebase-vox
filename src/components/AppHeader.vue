@@ -45,3 +45,14 @@
         </nav>
     </header>
 </template>
+<script>
+    import { auth } from '../firebase';
+
+    export default {
+        data() {
+            return {
+                auth,
+            };
+        }
+    }
+</script>
