@@ -82,6 +82,7 @@
                             placeholder="Message..."
                             aria-label="New Message"
                             aria-describedby="button-addon2"
+                            maxlength="500"
                             @keypress.enter="sendMessage(user.uid)"
                         >
 
